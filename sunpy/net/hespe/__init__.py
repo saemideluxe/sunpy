@@ -12,9 +12,10 @@ browser. This package provides access with python to all the data on HESPE.
 # - Cache-management?
 #
 
+from __future__ import absolute_import
+
 __authors__ = ["Samuel Stachelski"]
 __email__ = "samuel.vonstachelski@fhnw.ch"
 
-from __future__ import absolute_import
 
 from sunpy.net.hespe.hespe import *
