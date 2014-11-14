@@ -19,13 +19,13 @@ import astropy.io.fits as fits
 
 
 # URL-constants
-_FLARE_DATA_BASE_URL = "http://hsp.cs.technik.fhnw.ch/webdbi-0.6-SNAPSHOT/getEv\
-entAllData/"
+_FLARE_DATA_BASE_URL = "http://hsp.cs.technik.fhnw.ch/webdbi-0.6-SNAPSHOT/getE\
+ventAllData/"
 _IMAGE_DATABASE_BASE_URL = "http://hsp.cs.technik.fhnw.ch/flaredata/"
-_EVENT_LIST_BASE_URL = "http://hsp.cs.technik.fhnw.ch/webdbi-0.6-SNAPSHOT/filte\
-redEvents/"
-_EVENT_LIST_URL = "http://hsp.cs.technik.fhnw.ch/webdbi-0.6-SNAPSHOT/filteredEv\
-        ents/-1/-1/-1/-1/null/null/-1/0/0/startTime/DESC"
+_EVENT_LIST_BASE_URL = "http://hsp.cs.technik.fhnw.ch/webdbi-0.6-SNAPSHOT/filt\
+eredEvents/"
+_EVENT_LIST_URL = "http://hsp.cs.technik.fhnw.ch/webdbi-0.6-SNAPSHOT/filteredE\
+vents/-1/-1/-1/-1/null/null/-1/0/0/startTime/DESC"
 
 # HESPE uses it's own time system, which is seconds since 1.1.1979.
 # To work with python's datetime, the HESPE-time is converted to UNIX-time.
@@ -76,8 +76,8 @@ def _rewrite_url_to_fits_url(url):
 
 
 def _hespeTimeToUTC(time):
-    """Converts a HESPE time stamp to a python datetime object (UTC). HESPE uses
-    internally the number of seconds since the 1.1.1979.
+    """Converts a HESPE time stamp to a python datetime object (UTC). HESPE 
+    uses internally the number of seconds since the 1.1.1979.
 
     Parameters
     ----------
@@ -96,7 +96,7 @@ def _download_hespe_fits_as_map(url, energy_l=0, energy_h=0):
     values must be passed as arguments.
     """
 
-    download_dir = sunpy.config.get('downloads', 'download_dir') + "\\HESPE\\"
+    download_dir = sunpy.config.get('downloads', 'download_dir') + "/HESPE/"
 
     try:
         os.mkdir(download_dir)
@@ -174,7 +174,7 @@ def _generate_parameter_url(min_date=-1,
     )
 
 
-def get_maps_of_flare(flare_id,
+def get_maps_of_flareevent(flare_id,
                       ivs_type="coarse",
                       ray_type="photon",
                       img_alg="visclean"):
@@ -217,13 +217,13 @@ def get_maps_of_flare(flare_id,
         fits_url = _rewrite_url_to_fits_url(quicklook_url)
         sunpy_map = _download_hespe_fits_as_map(fits_url, energy_l, energy_h)
         map_list.append(sunpy_map)
-        print("%d of %d" % (c, n))
+        print("downloaded %d of %d" % (c, n))
         c += 1
 
     return map_list
 
 
-def get_lightcurve_of_event(flare_id):
+def get_lightcurve_of_flareevent(flare_id):
     """This returns a lightcurve object for the specified flare event"""
     flare_data = _get_flare_data(flare_id)
 
@@ -246,7 +246,7 @@ def get_lightcurve_of_event(flare_id):
     return ligthcurves
 
 
-def get_flares_between(start, end):
+def get_flareevents_between(start, end):
     """Returns a list which contains the IDs of all flare events in the
     specified time range.
 
@@ -277,7 +277,23 @@ def get_flares_between(start, end):
 
 
 def group_maps_by_energy(map_list):
+    """Returns a dictionary with an entry for each energy level. The keys are 
+    strings which describe the energy level. The values are CompositeMaps where
+    as all maps of the same energy level are alpha blended over each other.
+    TODO: make similar method and group by time-intervalls
+
+    Parameters
+    ----------
+    map_list : iterable
+        rhessi maps from a flare event
+        
+    Returns
+    -------
+    dict: (str: CompositeMap)
+
+    """
     dic = {}
+    
     for i in map_list:
         _key = (i.meta["energy_l"], i.meta["energy_h"])
         if _key not in dic:

@@ -18,4 +18,7 @@ __authors__ = ["Samuel Stachelski"]
 __email__ = "samuel.vonstachelski@fhnw.ch"
 
 
-from sunpy.net.hespe.hespe import *
+from sunpy.net.hespe.hespe import get_flareevents_between
+from sunpy.net.hespe.hespe import get_maps_of_flareevent
+from sunpy.net.hespe.hespe import get_lightcurve_of_flareevent
+from sunpy.net.hespe.hespe import group_maps_by_energy
